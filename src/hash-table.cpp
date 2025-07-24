@@ -48,7 +48,7 @@ void free_ht(ht_hash_table* ht)
 
 static int ht_hash(const char* s, const int a, unsigned int m)
 {
-  //test test
+  //test test test
   long hash = 0;
   const int s_len = strlen(s);
   for (int i = 0; i < s_len; i++)
