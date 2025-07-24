@@ -51,8 +51,19 @@ static void ht_resize(ht_hash_table* ht, const int base_size)
     }
   }
 
-  
+  ht->base_size = new_ht->base_size;
+  ht->count = new_ht->count;
 
+  // To delete new_ht, we give it ht's size and items 
+  const int tmp_size = ht->size;
+  ht->size = new_ht->size;
+  new_ht->size = tmp_size;
+
+  ht_item** tmp_items = ht->items;
+  ht->items = new_ht->items;
+  new_ht->items = tmp_items;
+
+  free_ht(new_ht);
 }
 
 void free_ht_item(ht_item* i)
