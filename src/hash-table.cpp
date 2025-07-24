@@ -3,9 +3,11 @@
 #include<cmath>
 
 #include"hash-table.h"
+#include"prime.h"
 
 static const int HT_PRIME_1 = 151;
 static const int HT_PRIME_2 = 163;
+static const int HT_INITIAL_BASE_SIZE = 53;
 static ht_item HT_DELETED_ITEM = {NULL, NULL};
 
 static ht_item* ht_new_item(const char* k, const char* v)
@@ -18,11 +20,39 @@ static ht_item* ht_new_item(const char* k, const char* v)
 
 ht_hash_table* ht_new()
 {
+  return ht_new_resized(HT_INITIAL_BASE_SIZE);
+}
+
+static ht_hash_table* ht_new_resized(const int base_size)
+{
   ht_hash_table* table = (ht_hash_table*)malloc(sizeof(ht_hash_table));
-  table->size = 53;
+  table->base_size = base_size;
+  
+  table->size = next_prime(base_size);
   table->count = 0;
+
   table->items = (ht_item**)calloc((size_t)table->size, sizeof(ht_item*));
   return table;
+}
+
+static void ht_resize(ht_hash_table* ht, const int base_size)
+{
+  if ( base_size < HT_INITIAL_BASE_SIZE ) {
+    return;
+  }
+
+  ht_hash_table* new_ht = ht_new_resized(base_size);
+  for (int i = 0; i < ht->size; i++)
+  {
+    ht_item* item = ht->items[i];
+    if ( item != nullptr && item != &HT_DELETED_ITEM )
+    {
+      ht_insert(new_ht, item->key, item->value);
+    }
+  }
+
+  
+
 }
 
 void free_ht_item(ht_item* i)
